@@ -46,7 +46,7 @@
 **Acceptance criteria:**
 - Hero name matches the `Карты` line
 - Cards parsed from `[Ad Td]` format
-- `format_cards("Ad", "Ac")` → `"AdAc"`, `format_cards("7d", "7h")` → `"77"`
+- `format_cards("Ad", "Ac")` → `"AdAc"`, `format_cards("7d", "7h")` → `"7d7h"`
 - Hand with no `Карты [hero]` line for the known hero name is flagged for skip
 
 ---
