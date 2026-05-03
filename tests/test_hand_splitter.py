@@ -102,3 +102,21 @@ class TestSplitHandsEdgeCases:
         hands = split_hands(text)
         assert len(hands) == 1
         assert "№2" in hands[0]
+
+    def test_trim_after_four_newlines_in_last_hand(self):
+        base = _build_text([1, 2])
+
+        # Add garbage tail after 4+ newlines
+        text = base + "\n\n\n\nTHIS SHOULD BE REMOVED\nMORE GARBAGE"
+
+        hands = split_hands(text)
+
+        assert len(hands) == 2
+
+        # Ensure last hand is trimmed
+        assert "THIS SHOULD BE REMOVED" not in hands[-1]
+        assert "MORE GARBAGE" not in hands[-1]
+
+        # Ensure valid hand content is preserved
+        assert "Раздача PokerStars №2" in hands[-1]
+        assert "*** ИТОГ ***" in hands[-1]
