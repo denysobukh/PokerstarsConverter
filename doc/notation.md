@@ -23,7 +23,7 @@ Hand#2
 AhKh BU 100bb vs BB
 
 Hand#11
-77 UTG 120bb vs MP, CO
+7s7c UTG 120bb vs MP, CO
 ```
 
 ---
