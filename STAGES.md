@@ -106,7 +106,7 @@
 
 ## Stage 7: Parse showdown and result
 
-**Goal:** Extract showdown cards, hand names, and win/loss outcome.
+**Goal:** Extract showdown cards, hand names, and win/loss/fold outcome.
 
 **Deliverables:**
 - `parser/showdown_parser.py` — `parse_showdown(block: str) -> ShowdownData | None`
