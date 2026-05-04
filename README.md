@@ -2,6 +2,78 @@
 
 Python CLI tool that converts PokerStars hand-history logs (Russian locale) into compact factual poker notation.
 
+<details>
+  <summary>Sample input (click to expand)</summary>
+
+```text
+*********** №1 **************
+Раздача PokerStars №260693414028:  Холдем Безлимитный ($0.01/$0.02 USD) - 04.05.2026 21:35:18 EET [04.05.2026 14:35:18 ВВ]
+Стол 'Agelaos V' 6-max Баттон на месте №4
+Место 1: weslei418 ($0.89 фишек)
+Место 2: Hountex ($2.18 фишек)
+Место 3: KA55o ($2.69 фишек)
+Место 4: emo357 ($2.04 фишек)
+Место 5: Avviee ($0.80 фишек)
+Место 6: jonnyjm ($3.79 фишек)
+Avviee: ставит малый блайнд $0.01
+jonnyjm: ставит большой блайнд $0.02
+*** ЗАКРЫТЫЕ КАРТЫ ***
+Карты Avviee [2d Th]
+weslei418: делает колл $0.02
+Hountex: делает рейз $0.06 $0.08
+KA55o: делает фолд
+emo357: делает колл $0.08
+Avviee: делает фолд
+jonnyjm: делает фолд
+weslei418: делает колл $0.06
+*** ФЛОП *** [7d 3c Qc]
+weslei418: делает бет $0.04
+Hountex: делает колл $0.04
+Avviee покидает стол
+emo357: делает колл $0.04
+*** ТЕРН *** [7d 3c Qc] [Jd]
+weslei418: делает бет $0.08
+Hountex: делает колл $0.08
+emo357: делает фолд
+*** РИВЕР *** [7d 3c Qc Jd] [4h]
+weslei418: делает чек
+Hountex: делает бет $0.78
+weslei418: делает колл $0.69 и олл-ин
+Неуравненная ставка ($0.09) возвращается игроку Hountex
+*** ВСКРЫТИЕ КАРТ ***
+Hountex: открывает [Js Jc] (тройку [валеты])
+weslei418: открывает [Qd Kc] (пару [дамы])
+Hountex получил $1.83 ( банк)
+*** ИТОГ ***
+Общий банк $1.93 | Доля $0.10
+Борд [7d 3c Qc Jd 4h]
+Место 1: weslei418 открыл [Qd Kc] и проиграл , собрав пару [дамы]
+Место 2: Hountex открыл [Js Jc] и выиграл ($1.83) , собрав тройку [валеты]
+Место 3: KA55o сделал фолд до Флоп (не ставил)
+Место 4: emo357 (баттон) сделал фолд на Терн
+Место 5: Avviee (малый блайнд) сделал фолд до Флоп
+Место 6: jonnyjm (большой блайнд) сделал фолд до Флоп
+```
+</details>
+
+<details>
+  <summary>Sample output (click to expand)</summary>
+
+```text
+Hand#1
+2dTh SB 40bb vs SB, BB
+
+PF: UTG c / HJ r 4.0bb / CO f / BU c / SB f / BB f / UTG c
+F 7d3cQc: UTG b 2.0bb / HJ c / BU c
+T Jd: UTG b 4.0bb / HJ c / BU f
+R 4h: UTG x / HJ b 39.0bb / UTG c
+
+SD: HJ JsJc = set
+SD: UTG QdKc = pair
+Result: fold
+```
+</details>
+
 ## Usage
 
 ```bash
