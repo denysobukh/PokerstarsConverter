@@ -110,13 +110,13 @@
 
 **Deliverables:**
 - `parser/showdown_parser.py` — `parse_showdown(block: str) -> ShowdownData | None`
-- `parser/models.py` — `ShowdownData` (villain_cards, villain_hand_name, hero_wins: bool)
-- `tests/test_showdown_parser.py` — hero wins, hero loses, no showdown (all fold), set vs trips distinction
+- `parser/models.py` — `ShowdownData` (villain_cards, villain_hand_name, hero_wins: win | loss | fold)
+- `tests/test_showdown_parser.py` — hero wins, hero loses, hero folds, no showdown (all fold), set vs trips distinction
 
 **Acceptance criteria:**
 - `открывает [cards]` lines parsed
 - Hand name from Russian text mapped to English: `стрит`→`straight`, `пару`→`pair`, `старшую карту`→`high card`, etc.
-- Hero win/loss determined from `выиграл`/`проиграл` in `*** ИТОГ ***`
+- Hero win/loss/fold determined from `выиграл`/`проиграл`/`сделал фолд` in `*** ИТОГ ***`
 - No showdown → returns `None`
 
 ---
