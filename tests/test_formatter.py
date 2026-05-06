@@ -1,11 +1,11 @@
 import pytest
 
-from parser.action_parser import Action
-from parser.header_parser import HandHeader, SeatInfo
-from parser.models import Hand
-from parser.showdown_parser import ShowdownData, ShowdownVillain
-from parser.street_parser import BoardCards, StreetActions, StreetData
-from formatter import format_hand
+from pokerstars_converter.parser.action_parser import Action
+from pokerstars_converter.parser.header_parser import HandHeader, SeatInfo
+from pokerstars_converter.parser.models import Hand
+from pokerstars_converter.parser.showdown_parser import ShowdownData, ShowdownVillain
+from pokerstars_converter.parser.street_parser import BoardCards, StreetActions, StreetData
+from pokerstars_converter.formatter import format_hand
 
 
 @pytest.fixture

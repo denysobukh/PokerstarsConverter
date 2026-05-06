@@ -1,4 +1,4 @@
-from utils.betsize import quantize_size
+from pokerstars_converter.utils.betsize import quantize_size
 
 
 class TestFractionMatch:

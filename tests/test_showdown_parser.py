@@ -1,5 +1,5 @@
 import pytest
-from parser.showdown_parser import (
+from pokerstars_converter.parser.showdown_parser import (
     ShowdownData,
     ShowdownVillain,
     _translate_hand_name,

@@ -1,4 +1,4 @@
-from parser.action_parser import (
+from pokerstars_converter.parser.action_parser import (
     Action,
     PreflopActions,
     extract_preflop_section,

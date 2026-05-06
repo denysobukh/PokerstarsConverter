@@ -1,5 +1,5 @@
 import pytest
-from parser.hand_splitter import split_hands
+from pokerstars_converter.parser.hand_splitter import split_hands
 
 # Minimal hand block: header line + a few action lines + ИТОГ
 HAND_TEMPLATE = """Раздача PokerStars №{hand_id}:  Холдем Безлимитный ($0.01/$0.02 USD) - 03.05.2026 18:47:49 EET [03.05.2026 11:47:49 ВВ]

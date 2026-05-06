@@ -1,5 +1,5 @@
 import pytest
-from parser.position_mapper import assign_positions
+from pokerstars_converter.parser.position_mapper import assign_positions
 
 
 # ── 6 players ──────────────────────────────────────────────────────────

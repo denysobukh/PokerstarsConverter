@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from parser.action_parser import Action
-from parser.models import Hand
-from utils.betsize import quantize_size
+from pokerstars_converter.parser.action_parser import Action
+from pokerstars_converter.parser.models import Hand
+from pokerstars_converter.utils.betsize import quantize_size
 
 _ACTION_SYMBOLS = {
     "fold": "f",

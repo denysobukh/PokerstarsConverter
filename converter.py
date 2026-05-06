@@ -1,95 +1,9 @@
-from __future__ import annotations
-
+from pathlib import Path
 import sys
 
-from parser.hand_splitter import split_hands
-from parser.header_parser import parse_header
-from parser.hero_parser import extract_hero, format_hero_cards
-from parser.position_mapper import assign_positions
-from parser.action_parser import parse_preflop_actions
-from parser.street_parser import parse_streets
-from parser.showdown_parser import parse_showdown
-from parser.models import Hand
-from utils.stacks import compute_eff_stack_bb
-from utils.villains import compute_villains
-from formatter import format_hand
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
-
-def parse_hand(block: str) -> Hand | None:
-    """Parse a single hand block into a Hand object.
-    
-    Returns None if Hero is not present in the hand.
-    """
-    header = parse_header(block)
-    hero_info = extract_hero(block)
-    if not hero_info:
-        return None
-
-    hero_name = hero_info.name
-    hero_cards = format_hero_cards(hero_info.card1, hero_info.card2)
-
-    active_seats = sorted(header.seats.keys())
-    seat_to_pos = assign_positions(header.button_seat, active_seats)
-    name_to_pos = {info.name: seat_to_pos[info.seat_number] for info in header.seats.values()}
-    hero_pos = name_to_pos.get(hero_name, "UNKNOWN")
-
-    pf_data = parse_preflop_actions(block)
-    pf_actions = pf_data.actions
-
-    villain_positions = compute_villains(pf_actions, hero_name, name_to_pos)
-
-    hero_chips = next((info.stack for info in header.seats.values() if info.name == hero_name), 0.0)
-    villain_chips = [
-        info.stack for info in header.seats.values()
-        if info.name != hero_name and name_to_pos.get(info.name) in villain_positions
-    ]
-    eff_bb = compute_eff_stack_bb(hero_chips, villain_chips, header.bb)
-
-    street_data = parse_streets(block)
-    showdown = parse_showdown(block, hero_name)
-
-    return Hand(
-        header=header,
-        hero_name=hero_name,
-        hero_cards=hero_cards,
-        hero_position=hero_pos,
-        eff_stack_bb=eff_bb,
-        villain_positions=villain_positions,
-        position_map=name_to_pos,
-        preflop_actions=pf_actions,
-        street_data=street_data,
-        showdown=showdown,
-    )
-
-
-def main():
-    if len(sys.argv) > 1:
-        try:
-            with open(sys.argv[1], "r", encoding="utf-8") as f:
-                text = f.read()
-        except FileNotFoundError:
-            print(f"Error: File '{sys.argv[1]}' not found.", file=sys.stderr)
-            sys.exit(1)
-    elif not sys.stdin.isatty():
-        text = sys.stdin.read()
-    else:
-        print("Usage: python converter.py <input_file.txt>", file=sys.stderr)
-        print("   or: python converter.py < input_file.txt", file=sys.stderr)
-        print("   or: pbpaste | python converter.py", file=sys.stderr)
-        sys.exit(1)
-
-    raw_hands = split_hands(text)
-    hand_number = 0
-    outputs = []
-
-    for block in raw_hands:
-        hand = parse_hand(block)
-        if hand is None:
-            continue
-        hand_number += 1
-        outputs.append(format_hand(hand, hand_number))
-
-    print("\n\n".join(outputs))
+from pokerstars_converter.converter import main, parse_hand
 
 
 if __name__ == "__main__":

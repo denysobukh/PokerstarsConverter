@@ -1,4 +1,4 @@
-from utils.stacks import compute_eff_stack_bb
+from pokerstars_converter.utils.stacks import compute_eff_stack_bb
 
 
 class TestComputeEffStackBB:

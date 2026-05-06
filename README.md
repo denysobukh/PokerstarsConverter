@@ -74,15 +74,43 @@ Result: fold
 ```
 </details>
 
+## Install With uv
+
+From a GitHub checkout:
+
+```bash
+git clone https://github.com/denysobukh/PokerstarsConverter.git
+cd PokerStarsConverter
+uv sync
+uv run pokerstars-converter doc/sample_input.txt
+```
+
+Install it as a global uv tool:
+
+```bash
+uv tool install git+https://github.com/denysobukh/PokerstarsConverter.git
+pokerstars-converter input_file.txt
+```
+
+For local development:
+
+```bash
+uv run pytest
+```
+
 ## Usage
 
 ```bash
+pokerstars-converter <input_file.txt>
+pokerstars-converter < input_file.txt
+pbpaste | pokerstars-converter
+
 python converter.py <input_file.txt>
 python converter.py < input_file.txt
 pbpaste | python converter.py
 ```
 
-Input can be provided as a filename argument or via stdin. Output is written to stdout: one hand block per hand, separated by a blank line. Hands where Hero is not seated are silently skipped.
+Input can be provided as a filename argument or via stdin. Output is written to stdout: one hand block per hand, separated by a blank line. Hands where Hero is not seated are silently skipped. The `converter.py` commands are kept as source-checkout compatibility shims; installed users should prefer `pokerstars-converter`.
 
 ## Architecture
 
@@ -91,7 +119,7 @@ The pipeline flows through three layers:
 ```
 converter.py (orchestration)
   │
-  ├── parser/   — raw text → structured data
+  ├── src/pokerstars_converter/parser/   — raw text → structured data
   │     hand_splitter    Split file into hand blocks
   │     header_parser    Extract stakes, seats, button
   │     hero_parser      Identify Hero and hole cards
@@ -101,12 +129,12 @@ converter.py (orchestration)
   │     showdown_parser  Parse showdown cards + win/loss outcome
   │     models           Dataclasses (Hand, HandHeader, etc.)
   │
-  ├── utils/    — derived computations
+  ├── src/pokerstars_converter/utils/    — derived computations
   │     stacks     Effective stack in big blinds
   │     villains   Determine villain list for header
   │     betsize    Quantize bet sizes to fraction-of-pot or Xbb
   │
-  └── formatter.py — Hand object → compact notation string
+  └── src/pokerstars_converter/formatter.py — Hand object → compact notation string
 ```
 
 ## Key Design Decisions
@@ -126,7 +154,7 @@ converter.py (orchestration)
 **Purpose:** Main entry point and orchestration module. Reads input, runs the full parse pipeline, and prints formatted output.
 
 **Dependencies:**
-- Internal: `parser.hand_splitter`, `parser.header_parser`, `parser.hero_parser`, `parser.position_mapper`, `parser.action_parser`, `parser.street_parser`, `parser.showdown_parser`, `parser.models`, `utils.stacks`, `utils.villains`, `formatter`
+- Internal: `pokerstars_converter.parser.hand_splitter`, `pokerstars_converter.parser.header_parser`, `pokerstars_converter.parser.hero_parser`, `pokerstars_converter.parser.position_mapper`, `pokerstars_converter.parser.action_parser`, `pokerstars_converter.parser.street_parser`, `pokerstars_converter.parser.showdown_parser`, `pokerstars_converter.parser.models`, `pokerstars_converter.utils.stacks`, `pokerstars_converter.utils.villains`, `pokerstars_converter.formatter`
 - External: `sys`
 
 #### Functions
@@ -161,7 +189,7 @@ def main():
 **Purpose:** Converts a parsed `Hand` object into the compact notation string format.
 
 **Dependencies:**
-- Internal: `parser.action_parser.Action`, `parser.models.Hand`, `utils.betsize.quantize_size`
+- Internal: `pokerstars_converter.parser.action_parser.Action`, `pokerstars_converter.parser.models.Hand`, `pokerstars_converter.utils.betsize.quantize_size`
 
 #### Constants
 
@@ -209,12 +237,12 @@ All-in actions use `a` symbol; bet/raise actions include quantized size; fold/ch
 
 ---
 
-### `parser/models.py`
+### `src/pokerstars_converter/parser/models.py`
 
 **Purpose:** Dataclasses that represent parsed poker hand structures.
 
 **Dependencies:**
-- Internal: `parser.action_parser.Action`, `parser.header_parser.HandHeader`, `parser.showdown_parser.ShowdownData`, `parser.street_parser.StreetData`
+- Internal: `pokerstars_converter.parser.action_parser.Action`, `pokerstars_converter.parser.header_parser.HandHeader`, `pokerstars_converter.parser.showdown_parser.ShowdownData`, `pokerstars_converter.parser.street_parser.StreetData`
 - External: `dataclasses`
 
 #### Classes
@@ -242,7 +270,7 @@ class Hand:
 
 ---
 
-### `parser/hand_splitter.py`
+### `src/pokerstars_converter/parser/hand_splitter.py`
 
 **Purpose:** Splits a raw PokerStars export file into individual hand blocks.
 
@@ -290,7 +318,7 @@ def _is_hand_block(text: str) -> bool:
 
 ---
 
-### `parser/header_parser.py`
+### `src/pokerstars_converter/parser/header_parser.py`
 
 **Purpose:** Extracts hand metadata (stakes, button seat, player roster) from a raw hand block.
 
@@ -366,7 +394,7 @@ def _extract_seats(block: str) -> dict[int, SeatInfo]:
 
 ---
 
-### `parser/hero_parser.py`
+### `src/pokerstars_converter/parser/hero_parser.py`
 
 **Purpose:** Identifies the hero player and parses hole card notation.
 
@@ -451,7 +479,7 @@ def format_hero_cards(card1: str, card2: str) -> str:
 
 ---
 
-### `parser/position_mapper.py`
+### `src/pokerstars_converter/parser/position_mapper.py`
 
 **Purpose:** Maps seat numbers to table position labels (BU, SB, BB, UTG, HJ, CO) for 6-max tables.
 
@@ -490,7 +518,7 @@ Algorithm: Starting from the button seat, assigns positions clockwise (ascending
 
 ---
 
-### `parser/action_parser.py`
+### `src/pokerstars_converter/parser/action_parser.py`
 
 **Purpose:** Parses individual player actions (fold, check, call, raise, bet) from raw hand text.
 
@@ -558,12 +586,12 @@ The raise handler uses `m.group(3)` (the second dollar figure) as the total bet 
 
 ---
 
-### `parser/street_parser.py`
+### `src/pokerstars_converter/parser/street_parser.py`
 
 **Purpose:** Parses post-flop board cards and actions for flop, turn, and river streets.
 
 **Dependencies:**
-- Internal: `parser.action_parser.Action`, `parser.action_parser._parse_single_action`
+- Internal: `pokerstars_converter.parser.action_parser.Action`, `pokerstars_converter.parser.action_parser._parse_single_action`
 - External: `re`, `dataclasses`
 
 #### Classes
@@ -676,7 +704,7 @@ def _extract_section_lines(block: str, start: str, stop_markers: list[str]) -> l
 
 ---
 
-### `parser/showdown_parser.py`
+### `src/pokerstars_converter/parser/showdown_parser.py`
 
 **Purpose:** Parses showdown cards, hand names, and win/loss/fold outcome from the summary section.
 
@@ -774,7 +802,7 @@ def _is_hero_result_line(line: str, hero_name: str) -> bool:
 
 ---
 
-### `utils/stacks.py`
+### `src/pokerstars_converter/utils/stacks.py`
 
 **Purpose:** Computes effective stack depth in big blinds.
 
@@ -799,12 +827,12 @@ Formula: `floor(min(hero_chips, min(villain_chips)) / bb)`. When `villain_chips`
 
 ---
 
-### `utils/villains.py`
+### `src/pokerstars_converter/utils/villains.py`
 
 **Purpose:** Determines which villain positions appear in the hand header.
 
 **Dependencies:**
-- Internal: `parser.action_parser.Action`
+- Internal: `pokerstars_converter.parser.action_parser.Action`
 
 #### Functions
 
@@ -861,7 +889,7 @@ def _list_blinds(positions: dict[str, str]) -> list[str]:
 
 ---
 
-### `utils/betsize.py`
+### `src/pokerstars_converter/utils/betsize.py`
 
 **Purpose:** Quantizes raw bet amounts to fraction-of-pot or Xbb notation.
 
@@ -914,29 +942,6 @@ def _format_bb(amount: float, bb: float) -> str:
 
 ---
 
-### `main.py`
-
-**Purpose:** Legacy entry point that splits hands and prints raw blocks (pre-pipeline).
-
-**Dependencies:**
-- Internal: `parser.hand_splitter.split_hands`
-- External: `sys`
-
-#### Functions
-
-```python
-def main():
-```
-
-* Description: Reads input file, splits into hand blocks, and prints each block with a header.
-* Parameters: None (reads `sys.argv`).
-* Returns: None.
-* Side effects: Prints raw hand blocks to stdout; exits with code 1 on missing arguments or file-not-found.
-
-Note: This is a simpler entry point that does not run the full parse/format pipeline. Use `converter.py` for formatted output.
-
----
-
 ## Cross-Module Insights
 
 ### Data Flow
@@ -957,13 +962,13 @@ Raw text → split_hands() → [hand blocks]
 
 ### Key Abstractions
 
-1. **`Hand` dataclass** (`parser/models.py`): Central aggregation object. All parser modules contribute fields; `formatter.py` consumes it.
-2. **`Action` dataclass** (`parser/action_parser.py`): Shared action representation used by preflop parser, street parser, villain computation, and formatter.
+1. **`Hand` dataclass** (`src/pokerstars_converter/parser/models.py`): Central aggregation object. All parser modules contribute fields; `formatter.py` consumes it.
+2. **`Action` dataclass** (`src/pokerstars_converter/parser/action_parser.py`): Shared action representation used by preflop parser, street parser, villain computation, and formatter.
 3. **Section extraction pattern**: Both `action_parser.py` and `street_parser.py` use a start/stop marker pattern to isolate text sections before parsing.
 
 ### Coupling Observations
 
-- `street_parser.py` imports `_parse_single_action` directly from `parser.action_parser` (private cross-module dependency). This is intentional to reuse the action parser for post-flop streets.
+- `street_parser.py` imports `_parse_single_action` directly from `pokerstars_converter.parser.action_parser` (private cross-module dependency). This is intentional to reuse the action parser for post-flop streets.
 - `converter.py` is the sole orchestrator; all other modules are leaf nodes with no inter-dependencies (except the above).
 - `formatter.py` depends on `Hand`, `Action`, and `quantize_size` — a clean consumer of parsed data.
 
@@ -973,17 +978,14 @@ Raw text → split_hands() → [hand blocks]
 
 ### Missing Docstrings
 
-- `parser/models.py`: `Hand` class has a brief docstring but individual fields are undocumented. Consider per-field docstrings or type-level documentation.
-- `parser/hero_parser.py`: `_parse_two_cards`, `_normalize_card`, `card_rank`, `card_suit` lack docstrings.
-- `parser/street_parser.py`: `_split_cards`, `_actions_from_lines`, `_extract_flop_action_lines`, `_extract_turn_action_lines`, `_extract_river_action_lines` lack docstrings.
-- `parser/showdown_parser.py`: `_parse_showdown_villains`, `_translate_hand_name`, `_parse_result`, `_is_hero_result_line` lack docstrings.
-- `utils/villains.py`: `_hero_first_action_index`, `_hero_folded_immediately`, `_list_blinds` lack docstrings.
-- `main.py`: `main()` lacks a docstring.
-
+- `src/pokerstars_converter/parser/models.py`: `Hand` class has a brief docstring but individual fields are undocumented. Consider per-field docstrings or type-level documentation.
+- `src/pokerstars_converter/parser/hero_parser.py`: `_parse_two_cards`, `_normalize_card`, `card_rank`, `card_suit` lack docstrings.
+- `src/pokerstars_converter/parser/street_parser.py`: `_split_cards`, `_actions_from_lines`, `_extract_flop_action_lines`, `_extract_turn_action_lines`, `_extract_river_action_lines` lack docstrings.
+- `src/pokerstars_converter/parser/showdown_parser.py`: `_parse_showdown_villains`, `_translate_hand_name`, `_parse_result`, `_is_hero_result_line` lack docstrings.
+- `src/pokerstars_converter/utils/villains.py`: `_hero_first_action_index`, `_hero_folded_immediately`, `_list_blinds` lack docstrings.
 ### Type Annotations
 
-- `main.py`: `main()` has no return type annotation (should be `-> None`).
-- `parser/hand_splitter.py`: `_is_hand_block` return type is implicit `bool` (acceptable, but explicit annotation would be consistent).
+- `src/pokerstars_converter/parser/hand_splitter.py`: `_is_hand_block` return type is implicit `bool` (acceptable, but explicit annotation would be consistent).
 
 ### Refactoring Suggestions
 

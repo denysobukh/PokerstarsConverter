@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from parser.action_parser import Action
+from pokerstars_converter.parser.action_parser import Action
 
 
 def compute_villains(

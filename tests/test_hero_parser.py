@@ -1,4 +1,4 @@
-from parser.hero_parser import (
+from pokerstars_converter.parser.hero_parser import (
     HeroInfo,
     card_rank,
     card_suit,

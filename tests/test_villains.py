@@ -1,5 +1,5 @@
-from parser.action_parser import Action
-from utils.villains import compute_villains
+from pokerstars_converter.parser.action_parser import Action
+from pokerstars_converter.utils.villains import compute_villains
 
 
 # ── helpers ────────────────────────────────────────────────────────────

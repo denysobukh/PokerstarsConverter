@@ -3,8 +3,8 @@ import sys
 from io import StringIO
 from unittest.mock import patch, mock_open
 
-from converter import parse_hand, main
-from parser.hand_splitter import split_hands
+from pokerstars_converter.converter import parse_hand, main
+from pokerstars_converter.parser.hand_splitter import split_hands
 
 # Full hand with flop, turn, river, showdown
 # Button at seat 2, Hero at seat 1 -> Hero is BB, Villain is BU

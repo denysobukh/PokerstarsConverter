@@ -1,4 +1,4 @@
-from parser.header_parser import (
+from pokerstars_converter.parser.header_parser import (
     HandHeader,
     SeatInfo,
     _extract_button_seat,

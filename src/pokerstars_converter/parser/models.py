@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from parser.action_parser import Action
-from parser.header_parser import HandHeader
-from parser.showdown_parser import ShowdownData
-from parser.street_parser import StreetData
+from pokerstars_converter.parser.action_parser import Action
+from pokerstars_converter.parser.header_parser import HandHeader
+from pokerstars_converter.parser.showdown_parser import ShowdownData
+from pokerstars_converter.parser.street_parser import StreetData
 
 
 @dataclass

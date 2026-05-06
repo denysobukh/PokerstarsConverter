@@ -1,5 +1,5 @@
 import pytest
-from parser.street_parser import (
+from pokerstars_converter.parser.street_parser import (
     BoardCards,
     StreetActions,
     StreetData,

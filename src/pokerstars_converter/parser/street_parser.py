@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from parser.action_parser import Action, _parse_single_action
+from pokerstars_converter.parser.action_parser import Action, _parse_single_action
 
 # ── board card patterns ────────────────────────────────────────────────
 
