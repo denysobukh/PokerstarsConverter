@@ -105,11 +105,11 @@ uv run pytest
 ## Usage
 
 ```bash
-pokerstars-converter <input_file.txt>
+pokerstars-converter input_file.txt
 pokerstars-converter < input_file.txt
 pbpaste | pokerstars-converter
 
-python converter.py <input_file.txt>
+python converter.py input_file.txt
 python converter.py < input_file.txt
 pbpaste | python converter.py
 ```
