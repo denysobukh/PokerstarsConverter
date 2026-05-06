@@ -1,5 +1,9 @@
 # PokerStars Converter
 
+[![CI](https://github.com/denysobukh/PokerstarsConverter/actions/workflows/ci.yml/badge.svg)](https://github.com/denysobukh/PokerstarsConverter/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 Python CLI tool that converts PokerStars hand-history logs (Russian locale) into compact factual poker notation.
 
 <details>
