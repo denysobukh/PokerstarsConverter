@@ -78,9 +78,11 @@ Result: fold
 
 ```bash
 python converter.py <input_file.txt>
+python converter.py < input_file.txt
+pbpaste | python converter.py
 ```
 
-Output is written to stdout: one hand block per hand, separated by a blank line. Hands where Hero is not seated are silently skipped.
+Input can be provided as a filename argument or via stdin. Output is written to stdout: one hand block per hand, separated by a blank line. Hands where Hero is not seated are silently skipped.
 
 ## Architecture
 
@@ -146,10 +148,10 @@ The function performs: header extraction, hero identification, position mapping,
 def main():
 ```
 
-* Description: CLI entry point. Reads file, splits hands, parses each, formats output, prints to stdout.
-* Parameters: None (reads `sys.argv`).
+* Description: CLI entry point. Reads a file argument or stdin, splits hands, parses each, formats output, prints to stdout.
+* Parameters: None (reads `sys.argv` and, when no file argument is present, `sys.stdin`).
 * Returns: None.
-* Side effects: Prints formatted hands to stdout; exits with code 1 on missing arguments or file-not-found.
+* Side effects: Prints formatted hands to stdout; exits with code 1 on missing input or file-not-found.
 * Raises: `SystemExit` on usage error or file I/O failure.
 
 ---

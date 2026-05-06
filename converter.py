@@ -63,15 +63,19 @@ def parse_hand(block: str) -> Hand | None:
 
 
 def main():
-    if len(sys.argv) < 2:
+    if len(sys.argv) > 1:
+        try:
+            with open(sys.argv[1], "r", encoding="utf-8") as f:
+                text = f.read()
+        except FileNotFoundError:
+            print(f"Error: File '{sys.argv[1]}' not found.", file=sys.stderr)
+            sys.exit(1)
+    elif not sys.stdin.isatty():
+        text = sys.stdin.read()
+    else:
         print("Usage: python converter.py <input_file.txt>", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        with open(sys.argv[1], "r", encoding="utf-8") as f:
-            text = f.read()
-    except FileNotFoundError:
-        print(f"Error: File '{sys.argv[1]}' not found.", file=sys.stderr)
+        print("   or: python converter.py < input_file.txt", file=sys.stderr)
+        print("   or: pbpaste | python converter.py", file=sys.stderr)
         sys.exit(1)
 
     raw_hands = split_hands(text)

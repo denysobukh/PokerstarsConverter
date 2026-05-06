@@ -1,5 +1,6 @@
 import pytest
 import sys
+from io import StringIO
 from unittest.mock import patch, mock_open
 
 from converter import parse_hand, main
@@ -129,6 +130,42 @@ class TestIntegrationPipeline:
         assert "Hand#1" in captured.out
         assert "AdTd BB 100bb vs BU" in captured.out
         assert "Result: lost" in captured.out
+
+    def test_cli_reads_redirected_stdin(self, capsys):
+        text = _build_text([FULL_HAND])
+        with patch("sys.argv", ["converter.py"]):
+            with patch("sys.stdin", StringIO(text)):
+                main()
+
+        captured = capsys.readouterr()
+        assert "Hand#1" in captured.out
+        assert "AdTd BB 100bb vs BU" in captured.out
+        assert "Result: lost" in captured.out
+
+    def test_cli_file_argument_takes_precedence_over_stdin(self, capsys):
+        file_text = _build_text([FOLD_HAND])
+        stdin_text = _build_text([FULL_HAND])
+        with patch("sys.argv", ["converter.py", "dummy.txt"]):
+            with patch("builtins.open", mock_open(read_data=file_text)):
+                with patch("sys.stdin", StringIO(stdin_text)):
+                    main()
+
+        captured = capsys.readouterr()
+        assert "7s7c BB 100bb" in captured.out
+        assert "AdTd" not in captured.out
+
+    def test_cli_usage_when_no_file_and_no_stdin(self, capsys):
+        stdin = StringIO("")
+        stdin.isatty = lambda: True
+        with patch("sys.argv", ["converter.py"]):
+            with patch("sys.stdin", stdin):
+                with pytest.raises(SystemExit) as exc_info:
+                    main()
+
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Usage: python converter.py <input_file.txt>" in captured.err
+        assert "pbpaste | python converter.py" in captured.err
 
     def test_cli_file_not_found(self, capsys):
         with patch("sys.argv", ["converter.py", "nonexistent.txt"]):
